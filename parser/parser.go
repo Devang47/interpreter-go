@@ -32,25 +32,14 @@ func New(l *lexer.Lexer) *Parser {
 	p.nextToken()
 	p.nextToken()
 
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+
 	return p
 }
 
-func (p *Parser) Errors() []string {
-	return p.errors
-}
-
-func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
-	p.errors = append(p.errors, msg)
-}
-
-func (p *Parser) nextToken() {
-	p.curToken = p.peekToken
-	p.peekToken = p.l.NextToken()
-}
-
 func (p *Parser) ParseProgram() *ast.Program {
-
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 
@@ -65,60 +54,12 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
-func (p *Parser) parseStatement() ast.Statement {
-	switch p.curToken.Type {
-	case token.LET:
-		return p.parseLetStatement()
-	case token.RETURN:
-		return p.parseReturnStatement()
-	default:
-		return p.parseExpressionStatement()
-	}
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
 }
 
-func (p *Parser) parseLetStatement() *ast.LetStatement {
-	stmt := &ast.LetStatement{Token: p.curToken}
-	if !p.expectPeek(token.IDENT) {
-		p.peekError(token.IDENT)
-		return nil
-	}
-
-	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	if !p.expectPeek(token.ASSIGN) {
-		p.peekError(token.ASSIGN)
-		return nil
-	}
-
-	// TODO: We're skipping the expressions until we
-	// encounter a semicolon
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
-	}
-	return stmt
-}
-
-func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
-	stmt := &ast.ReturnStatement{Token: p.curToken}
-	p.nextToken()
-
-	// TODO: We're skipping the expressions until we
-	// encounter a semicolon
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
-	}
-	return stmt
-}
-
-func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
-	stmt := &ast.ExpressionStatement{Token: p.curToken}
-
-	stmt.Expression = p.parseExpression(LOWEST)
-
-	if p.peekTokenIs(token.SEMICOLON) {
-		p.nextToken()
-	}
-
-	return stmt
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {
@@ -139,10 +80,16 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 	}
 }
 
-func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
-	p.prefixParseFns[tokenType] = fn
+func (p *Parser) Errors() []string {
+	return p.errors
 }
 
-func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
-	p.infixParseFns[tokenType] = fn
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) nextToken() {
+	p.curToken = p.peekToken
+	p.peekToken = p.l.NextToken()
 }
