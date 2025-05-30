@@ -1,10 +1,10 @@
 package parser
 
 import (
+	"bananaScript/ast"
+	"bananaScript/lexer"
+	"bananaScript/token"
 	"fmt"
-	"monkey/ast"
-	"monkey/lexer"
-	"monkey/token"
 )
 
 type Parser struct {

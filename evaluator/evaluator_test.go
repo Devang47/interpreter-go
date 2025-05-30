@@ -1,9 +1,9 @@
 package evaluator
 
 import (
-	"monkey/lexer"
-	"monkey/object"
-	"monkey/parser"
+	"bananaScript/lexer"
+	"bananaScript/object"
+	"bananaScript/parser"
 	"testing"
 )
 
@@ -212,14 +212,18 @@ func TestErrorHandling(t *testing.T) {
 		},
 		{
 			`
-if (10 > 1) {
-	if (10 > 1) {
-		return true + false;
-	}
-	return 1;
-}
+			if (10 > 1) {
+				if (10 > 1) {
+					return true + false;
+				}
+				return 1;
+			}
 `,
 			"unknown operator: BOOLEAN + BOOLEAN",
+		},
+		{
+			"foobar;",
+			"identifier not found: foobar",
 		},
 	}
 
@@ -237,5 +241,21 @@ if (10 > 1) {
 				tt.expectedMessage, errObj.Message)
 		}
 
+	}
+}
+
+func TestLetStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let a = 5; a;", 5},
+		{"let a = 5 * 5; a;", 25},
+		{"let a = 5; let b = a; b;", 5},
+		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
 	}
 }

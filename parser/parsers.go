@@ -1,9 +1,9 @@
 package parser
 
 import (
+	"bananaScript/ast"
+	"bananaScript/token"
 	"fmt"
-	"monkey/ast"
-	"monkey/token"
 	"strconv"
 )
 

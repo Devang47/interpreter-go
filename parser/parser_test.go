@@ -1,9 +1,9 @@
 package parser
 
 import (
+	"bananaScript/ast"
+	"bananaScript/lexer"
 	"fmt"
-	"monkey/ast"
-	"monkey/lexer"
 	"testing"
 )
 

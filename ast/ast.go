@@ -1,8 +1,8 @@
 package ast
 
 import (
+	"bananaScript/token"
 	"bytes"
-	"monkey/token"
 	"strings"
 )
 
