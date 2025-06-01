@@ -1,7 +1,13 @@
 # BananaScript Language Interpreter in Go
 
-[![Test](https://github.com/username/interpreter-go/actions/workflows/test.yml/badge.svg)](https://github.com/username/interpreter-go/actions/workflows/test.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/username/interpreter-go)](https://goreportcard.com/report/github.com/username/interpreter-go)
+
+<p align="center">
+  <a href="https://github.com/Devang47/interpreter-go/actions/workflows/test.yml/badge.svg"><img src="https://github.com/Devang47/interpreter-go/actions/workflows/test.yml/badge.svg" alt="GitHub Actions CI Status" /></a>
+  <a href="https://kaos.sh/r/go-badge"><img src="https://kaos.sh/r/go-badge.svg" alt="GoReportCard" /></a>
+  <a href="https://kaos.sh/c/go-badge"><img src="https://kaos.sh/c/go-badge.svg" alt="Coverage Status" /></a><br/>
+  <a href="https://kaos.sh/y/go-badge"><img src="https://kaos.sh/y/a090e4e0d8e14e58bc9c7a5458c2803e.svg" alt="Codacy badge" /></a>
+  <a href="https://kaos.sh/w/go-badge/codeql"><img src="https://kaos.sh/w/go-badge/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
+</p>
 
 A complete interpreter implementation for the BananaScript programming language, built from scratch in Go. This project follows the excellent book ["Writing an Interpreter in Go"](https://interpreterbook.com/) by Thorsten Ball.
 
