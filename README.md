@@ -1,7 +1,7 @@
 # BananaScript Language Interpreter in Go
 
 
-<p align="center">
+<p>
   <a href="https://github.com/Devang47/interpreter-go/actions/workflows/test.yml/badge.svg"><img src="https://github.com/Devang47/interpreter-go/actions/workflows/test.yml/badge.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/r/go-badge"><img src="https://kaos.sh/r/go-badge.svg" alt="GoReportCard" /></a>
   <a href="https://kaos.sh/c/go-badge"><img src="https://kaos.sh/c/go-badge.svg" alt="Coverage Status" /></a><br/>
