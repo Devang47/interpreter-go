@@ -1,5 +1,8 @@
 # BananaScript Language Interpreter in Go
 
+[![Test](https://github.com/username/interpreter-go/actions/workflows/test.yml/badge.svg)](https://github.com/username/interpreter-go/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/username/interpreter-go)](https://goreportcard.com/report/github.com/username/interpreter-go)
+
 A complete interpreter implementation for the BananaScript programming language, built from scratch in Go. This project follows the excellent book ["Writing an Interpreter in Go"](https://interpreterbook.com/) by Thorsten Ball.
 
 ## 📊 Project Status
@@ -21,6 +24,7 @@ A complete interpreter implementation for the BananaScript programming language,
 - **Return Statements**: Early returns with proper value propagation
 - **Error Handling**: Comprehensive error reporting and propagation
 - **REPL**: Interactive Read-Eval-Print Loop for live coding
+- **CI/CD Pipeline**: Automated testing with GitHub Actions
 
 ### Language Features Supported
 
@@ -64,6 +68,7 @@ let factorial = fn(n) {
 - **Interface-Driven Design**: Extensible architecture using Go interfaces
 - **Error Handling**: Idiomatic Go error handling patterns
 - **Memory Management**: Efficient object allocation and garbage collection
+- **Continuous Integration**: Automated testing with GitHub Actions
 
 ### Testing Strategy
 
@@ -72,6 +77,15 @@ let factorial = fn(n) {
 - **Parser Testing**: Extensive AST validation
 - **Evaluator Testing**: Expression and statement evaluation verification
 - **Error Case Testing**: Comprehensive error condition coverage
+- **Automated CI/CD**: GitHub Actions workflow for continuous testing
+
+### Quality Assurance
+
+- **Code Coverage**: Minimum 80% test coverage requirement
+- **Code Formatting**: Automated `go fmt` checks
+- **Static Analysis**: `go vet` for potential issues
+- **Race Detection**: Concurrent execution testing
+- **Multi-version Support**: Testing on Go 1.22.x and 1.23.x
 
 ## 🏗️ Architecture
 
@@ -85,14 +99,16 @@ Source Code → Lexer → Tokens → Parser → AST → Evaluator → Result
 
 ```
 interpreter-go/
-├── lexer/          # Tokenization and lexical analysis
-├── token/          # Token definitions and utilities
-├── parser/         # Recursive descent parser
-├── ast/            # Abstract Syntax Tree definitions
-├── object/         # Runtime object system and environment
-├── evaluator/      # Tree-walking interpreter
-├── repl/           # Read-Eval-Print Loop
-└── main.go         # Entry point
+├── .github/
+│   └── workflows/      # GitHub Actions CI/CD
+├── lexer/              # Tokenization and lexical analysis
+├── token/              # Token definitions and utilities
+├── parser/             # Recursive descent parser
+├── ast/                # Abstract Syntax Tree definitions
+├── object/             # Runtime object system and environment
+├── evaluator/          # Tree-walking interpreter
+├── repl/               # Read-Eval-Print Loop
+└── main.go             # Entry point
 ```
 
 ### Key Components
@@ -149,10 +165,30 @@ go test ./...
 # Run tests with coverage
 go test -cover ./...
 
+# Run tests with race detection
+go test -race ./...
+
 # Run specific package tests
 go test ./lexer
 go test ./parser
 go test ./evaluator
+
+# Generate coverage report
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out -o coverage.html
+```
+
+### Development Workflow
+
+```bash
+# Format code
+go fmt ./...
+
+# Check for potential issues
+go vet ./...
+
+# Run full test suite (same as CI)
+go test -v -race -coverprofile=coverage.out ./...
 ```
 
 ### Example Session
@@ -178,6 +214,7 @@ This project demonstrates proficiency in:
 - **Software Architecture**: Clean, modular design principles
 - **Testing**: Comprehensive test-driven development
 - **Data Structures**: AST manipulation and environment management
+- **DevOps**: CI/CD pipeline setup and automation
 
 ## 🎯 Future Enhancements
 
@@ -200,6 +237,13 @@ This project demonstrates proficiency in:
 - [ ] Symbol table implementation
 - [ ] Constant folding and dead code elimination
 
+### CI/CD Improvements
+
+- [ ] Add benchmarking tests to track performance
+- [ ] Implement semantic versioning with automated releases
+- [ ] Add security scanning with CodeQL
+- [ ] Create multi-platform builds (Linux, macOS, Windows)
+
 ## 📖 Book Reference
 
 This implementation closely follows the methodology and examples from:
@@ -218,8 +262,17 @@ While this is primarily a learning project, contributions are welcome! Please en
 
 - All tests pass (`go test ./...`)
 - Code follows Go conventions (`go fmt`, `go vet`)
+- Maintain minimum 80% test coverage
 - New features include comprehensive tests
 - Documentation is updated accordingly
+- GitHub Actions CI pipeline passes
+
+The CI pipeline will automatically:
+
+- Run tests on multiple Go versions
+- Check code formatting and style
+- Verify test coverage meets requirements
+- Generate coverage reports
 
 ## 📄 License
 
