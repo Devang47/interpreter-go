@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"bananaScript/token"
+	"log"
 )
 
 type Lexer struct {
@@ -72,6 +73,9 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
+	case '"':
+		tok.Type = token.STRING
+		tok.Literal = l.readString()
 
 	default:
 		if isLetter(l.ch) {
@@ -103,6 +107,27 @@ func (l *Lexer) readIdentifier() string {
 		l.readChar()
 	}
 	return l.input[position:l.position]
+}
+
+func (l *Lexer) readString() string {
+	position := l.position + 1
+	var result []byte
+
+	for {
+		l.readChar()
+
+		if l.ch == 0x5c && l.peekChar() == '"' {
+			l.readChar()
+			result = append(result, '"')
+		} else if l.ch == '"' {
+			break
+		} else if l.ch == 0 {
+			log.Fatalf("unterminated string literal at position %d", position)
+		} else {
+			result = append(result, l.ch)
+		}
+	}
+	return string(result)
 }
 
 func (l *Lexer) readNumber() string {
