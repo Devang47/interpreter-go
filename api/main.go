@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Request struct {
@@ -122,11 +122,6 @@ func stringToJson(message string, errors []string, isError bool) []byte {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	http.HandleFunc("/", indexHtml)
 	http.HandleFunc("/health", healthCheck)
 	http.HandleFunc("/api/execute", executeCode)
