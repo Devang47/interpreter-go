@@ -18,6 +18,7 @@ const (
 
 	// Operators
 	ASSIGN     = "="
+	ASSIGNMENT = "ASSIGN"
 	COMPARISON = "=="
 	PLUS       = "+"
 	MINUS      = "-"
@@ -27,6 +28,8 @@ const (
 	CARET      = "^"
 	EQ         = "=="
 	NOT_EQ     = "!="
+
+	COMMENT = "//"
 
 	LT = "<"
 	GT = ">"
@@ -39,6 +42,9 @@ const (
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
+
+	LBRACKET = "["
+	RBRACKET = "]"
 
 	// Keywords
 	FUNCTION = "FUNCTION"

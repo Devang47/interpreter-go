@@ -245,3 +245,72 @@ func (ce *CallExpression) String() string {
 	out.WriteString(")")
 	return out.String()
 }
+
+type ArrayLiteral struct {
+	Token    token.Token // the '[' token
+	Elements []Expression
+}
+
+func (al *ArrayLiteral) expressionNode()      {}
+func (al *ArrayLiteral) TokenLiteral() string { return al.Token.Literal }
+func (al *ArrayLiteral) String() string {
+	var out bytes.Buffer
+	elements := []string{}
+	for _, el := range al.Elements {
+		elements = append(elements, el.String())
+	}
+	out.WriteString("[")
+	out.WriteString(strings.Join(elements, ", "))
+	out.WriteString("]")
+	return out.String()
+}
+
+type IndexExpression struct {
+	Token token.Token // The [ token
+	Left  Expression
+	Index Expression
+}
+
+func (ie *IndexExpression) expressionNode()      {}
+func (ie *IndexExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *IndexExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(ie.Left.String())
+	out.WriteString("[")
+	out.WriteString(ie.Index.String())
+	out.WriteString("])")
+	return out.String()
+}
+
+type AssignmentExpression struct {
+	Token token.Token // the identifier token
+	Name  *Identifier
+	Value Expression
+}
+
+func (ae *AssignmentExpression) expressionNode()      {}
+func (ae *AssignmentExpression) TokenLiteral() string { return ae.Token.Literal }
+func (ae *AssignmentExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString(ae.Name.String())
+	out.WriteString(" = ")
+	if ae.Value != nil {
+		out.WriteString(ae.Value.String())
+	}
+	return out.String()
+}
+
+type CommentExpression struct {
+	Token   token.Token // The 'if' token
+	Comment string
+}
+
+func (ce *CommentExpression) expressionNode()      {}
+func (ce *CommentExpression) TokenLiteral() string { return ce.Token.Literal }
+func (ce *CommentExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("//")
+	out.WriteString(ce.Comment)
+	return out.String()
+}

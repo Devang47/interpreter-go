@@ -41,6 +41,13 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
+	case '/':
+		if l.peekChar() == '/' {
+			l.skipComment()
+			return l.NextToken() // Get the next non-comment token
+		} else {
+			tok = newToken(token.SLASH, l.ch)
+		}
 
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
@@ -57,10 +64,13 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.MINUS, l.ch)
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch)
-	case '/':
-		tok = newToken(token.SLASH, l.ch)
 	case '^':
 		tok = newToken(token.CARET, l.ch)
+
+	case '[':
+		tok = newToken(token.LBRACKET, l.ch)
+	case ']':
+		tok = newToken(token.RBRACKET, l.ch)
 
 	case '{':
 		tok = newToken(token.LBRACE, l.ch)
@@ -153,5 +163,12 @@ func (l *Lexer) peekChar() byte {
 		return 0
 	} else {
 		return l.input[l.readPosition]
+	}
+}
+
+func (l *Lexer) skipComment() {
+	// Skip until end of line or end of input
+	for l.ch != '\n' && l.ch != '\r' && l.ch != 0 {
+		l.readChar()
 	}
 }
