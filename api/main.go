@@ -24,8 +24,31 @@ type Response struct {
 	Errors []string `json:"errors"`
 }
 
+type HealthResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
 func indexHtml(w http.ResponseWriter, req *http.Request) {
 	http.ServeFile(w, req, "index.html")
+}
+
+func healthCheck(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	health := HealthResponse{
+		Status:  "healthy",
+		Message: "BananaScript API is running",
+	}
+
+	jsonData, err := json.Marshal(health)
+	if err != nil {
+		http.Error(w, "Error creating health response", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonData)
 }
 
 func executeCode(w http.ResponseWriter, req *http.Request) {
@@ -105,6 +128,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", indexHtml)
+	http.HandleFunc("/health", healthCheck)
 	http.HandleFunc("/api/execute", executeCode)
 
 	port := os.Getenv("PORT")
