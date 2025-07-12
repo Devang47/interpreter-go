@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BananaScript Online REPL</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-neutral-900 pb-20 text-neutral-100 font-sans underline-offset-2">
+  <header class="flex items-center max-w-4xl justify-between w-full mx-auto py-3 border-b border-neutral-600 px-4">
+    <h1 class="font-semibold text-white">
+      BananaScript
+    </h1>
+
+    <a href="https://github.com/Devang47/interpreter-go" class="underline text-sm block w-fit">
+      Github
+    </a>
+
+    <a href="/docs" class="underline text-sm block w-fit">
+      Documentation
+    </a>
+  </header>
+
+  <div class="w-full mt-10 max-w-lg text-center mx-auto">
+    <h2 class="text-white font-semibold text-4xl">
+      BananaScript
+    </h2>
+    <p class="mt-4 text-neutral-300">
+      A complete interpreter implementation for the BananaScript programming language, built from scratch in Go. This
+      project follows the excellent book "<a href="https://interpreterbook.com/" target="_blank"
+        rel="noopener noreferrer" class="underline">Writing an Interpreter in Go</a>" by Thorsten
+      Ball.
+    </p>
+  </div>
+
+
+
+  <div class="mt-14 max-w-4xl mx-auto">
+    <div class="flex items-center gap-4">
+      <h3 class="font-medium text-neutral-200">Run BananaScript Code</h3>
+
+      <button id="loadCode1"
+        class="bg-neutral-800 text-sm ml-auto hover:bg-neutral-700 text-white/90 hover:text-white/100 cursor-pointer px-4 py-2 rounded-lg">
+        Code 1
+      </button>
+      <button id="loadCode2"
+        class="bg-neutral-800 text-sm hover:bg-neutral-700 text-white/90 hover:text-white/100 cursor-pointer px-4 py-2 rounded-lg">
+        Code 2
+      </button>
+    </div>
+
+    <textarea name="codeinput" id="codeinput"
+      class="w-full bg-neutral-800 py-3 px-5 mt-4 rounded-lg focus:outline-white focus:outline-1 text-mono text-base w-full h-96 resize-none"
+      placeholder="Enter BananaScript code ..."></textarea>
+
+
+    <button id="executeButton"
+      class="bg-sky-700 mt-5 w-fit block mx-auto font-medium text-base hover:bg-sky-800 duration-100 text-white/90 hover:text-white/100 cursor-pointer px-4 py-2 rounded-lg">
+      Execute!
+    </button>
+
+
+    <div class="mt-10">
+      <h3 class="font-medium text-neutral-200">Output:</h3>
+      <div id="codeoutput" style="white-space: pre-line;"
+        class="w-full bg-neutral-800 py-3 px-5 mt-4 rounded-lg text-mono text-base w-full"
+        placeholder="Output will appear here">
+      </div>
+    </div>
+
+
+    <script>
+      const codeInput = document.getElementById('codeinput');
+      const outputArea = document.getElementById('codeoutput');
+      const executeButton = document.getElementById('executeButton');
+
+
+      executeButton.addEventListener('click', async () => {
+        const code = codeInput.value.trim();
+        if (!code) {
+          outputArea.value = 'Please enter some BananaScript code.';
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/execute', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+          });
+
+          const result = await response.json();
+
+          if (response.status == 400) {
+            outputArea.innerHTML = `Woops! We ran into some banana business here!
+          Parser errors:
+          ${result.errors || 'Unknown error occurred.'}`
+            return;
+          }
+
+          outputArea.innerHTML = result.output || 'No output generated.';
+        } catch (error) {
+          outputArea.innerHTML = `Error: ${error.message}`;
+        }
+      });
+
+      const loadCode1 = document.getElementById('loadCode1');
+      const loadCode2 = document.getElementById('loadCode2');
+
+      loadCode1.addEventListener('click', () => {
+        codeInput.value = `let x = 5;
+let y = 10;
+let name = "BananaScript";
+
+// Functions with Closures
+let makeCounter = fn() {
+    let count = 0;
+    fn() {
+        count = count + 1;
+        count;
+    };
+};
+
+let counter = makeCounter();
+counter(); // 1
+counter(); // 2
+
+// Recursive Functions
+let fibonacci = fn(n) {
+    if (n < 2) {
+        n;
+    } else {
+        fibonacci(n - 1) + fibonacci(n - 2);
+    }
+};
+
+
+
+// Higher-Order Functions
+let map = fn(arr, f) {
+    let result = [];
+    let iter = fn(arr, accumulated) {
+        if (len(arr) == 0) {
+            accumulated;
+        } else {
+            iter(rest(arr), push(accumulated, f(first(arr))));
+        }
+    };
+    iter(arr, result);
+};
+
+// Array Processing
+let numbers = [1, 2, 3, 4, 5];
+let doubled = map(numbers, fn(x) { x * 2 });
+print(doubled);
+doubled;`
+
+      });
+
+      loadCode2.addEventListener('click', () => {
+        codeInput.value = `// Composition and Currying
+let compose = fn(f, g) {
+    fn(x) { f(g(x)); };
+};
+
+let add = fn(x) {
+    fn(y) { x + y; };
+};
+
+let multiply = fn(x) {
+    fn(y) { x * y; };
+};
+
+let addThenDouble = compose(multiply(2), add(5));
+addThenDouble(3); // (3 + 5) * 2 = 16
+
+// Array Transformation Pipeline
+let pipeline = fn(arr) {
+    let filter = fn(arr, predicate) {
+        let result = [];
+        let iter = fn(arr, acc) {
+            if (len(arr) == 0) {
+                acc;
+            } else {
+                let head = first(arr);
+                let tail = rest(arr);
+                if (predicate(head)) {
+                    iter(tail, push(acc, head));
+                } else {
+                    iter(tail, acc);
+                }
+            }
+        };
+        iter(arr, result);
+    };
+    
+    let reduce = fn(arr, initial, reducer) {
+        let iter = fn(arr, acc) {
+            if (len(arr) == 0) {
+                acc;
+            } else {
+                iter(rest(arr), reducer(acc, first(arr)));
+            }
+        };
+        iter(arr, initial);
+    };
+    
+    let isEven = fn(x) { x - (x / 2) * 2 == 0; };
+    let sum = fn(a, b) { a + b; };
+    
+    reduce(filter(arr, isEven), 0, sum);
+};
+
+pipeline([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // 30`
+
+      });
+
+    </script>
+
+</body>
+
+</html>

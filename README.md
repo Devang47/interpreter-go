@@ -10,10 +10,6 @@
 
 A complete interpreter implementation for the BananaScript programming language, built from scratch in Go. This project follows the excellent book ["Writing an Interpreter in Go"](https://interpreterbook.com/) by Thorsten Ball.
 
-## 📊 Project Status
-
-**70% Complete** - Core interpreter functionality implemented with room for additional features and optimizations.
-
 ## 🚀 Features
 
 ### Implemented ✅
@@ -23,12 +19,17 @@ A complete interpreter implementation for the BananaScript programming language,
 - **AST Generation**: Abstract Syntax Tree construction and traversal
 - **Expression Evaluation**: Support for arithmetic, boolean, and comparison operations
 - **Control Flow**: If-else expressions with proper scoping
-- **Variable Binding**: Let statements with environment-based variable storage
-- **Function Definitions**: First-class functions with lexical scoping
+- **Variable Binding**: Let statements and assignment expressions with environment-based variable storage
+- **Function Definitions**: First-class functions with lexical scoping and closures
 - **Function Calls**: Support for function invocation with arguments
 - **Return Statements**: Early returns with proper value propagation
+- **Built-in Functions**: Core functions like `len`, `first`, `last`, `rest`, `push`, `print`
+- **Array Support**: Array literals, indexing, and manipulation
+- **String Operations**: String literals and concatenation
 - **Error Handling**: Comprehensive error reporting and propagation
+- **Comments**: Single-line comment support with `//`
 - **REPL**: Interactive Read-Eval-Print Loop for live coding
+- **Web API**: HTTP API server for executing BananaScript code
 - **CI/CD Pipeline**: Automated testing with GitHub Actions
 
 ### Language Features Supported
@@ -38,6 +39,9 @@ A complete interpreter implementation for the BananaScript programming language,
 let x = 5;
 let y = 10;
 let name = "BananaScript";
+
+// Variable Assignment
+x = 15; // Update existing variable
 
 // Functions with Closures
 let makeCounter = fn() {
@@ -77,33 +81,10 @@ let map = fn(arr, f) {
 // Array Processing
 let numbers = [1, 2, 3, 4, 5];
 let doubled = map(numbers, fn(x) { x * 2 });
+print(doubled);
 ```
 
 ## 🎯 Showcase Examples
-
-### 🔥 Advanced Fibonacci with Memoization
-```js
-let fibMemo = fn() {
-    let cache = {};
-    let fib = fn(n) {
-        if (n < 2) {
-            return n;
-        }
-        // Note: Object indexing not yet implemented, but shows intent
-        let cached = cache[n];
-        if (cached) {
-            return cached;
-        }
-        let result = fib(n - 1) + fib(n - 2);
-        cache[n] = result;
-        result;
-    };
-    fib;
-};
-
-let fastFib = fibMemo();
-fastFib(40); // Fast computation
-```
 
 ### 🚀 Functional Programming Showcase
 ```js
@@ -166,13 +147,8 @@ pipeline([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // 30
 ### 🎲 Monte Carlo Pi Estimation
 ```js
 let estimatePi = fn(samples) {
-    let random = fn() {
-        // Simplified random using arithmetic (not truly random)
-        let seed = 123456789;
-        seed = (seed * 9301 + 49297) % 233280;
-        seed / 233280;
-    };
-    
+    // Note: Using a simple counter for demonstration
+    // Real random number generation would require additional built-ins
     let insideCircle = 0;
     let i = 0;
     
@@ -181,8 +157,9 @@ let estimatePi = fn(samples) {
             return 4 * insideCircle / samples;
         }
         
-        let x = random() * 2 - 1;
-        let y = random() * 2 - 1;
+        // Simplified calculation for demonstration
+        let x = (i * 7 + 13) % 100 / 100.0 * 2 - 1;
+        let y = (i * 11 + 17) % 100 / 100.0 * 2 - 1;
         
         if (x * x + y * y <= 1) {
             insideCircle = insideCircle + 1;
@@ -195,36 +172,10 @@ let estimatePi = fn(samples) {
     loop();
 };
 
-estimatePi(10000); // Approximates π
+estimatePi(100); // Rough approximation of π
 ```
 
-### 🏗️ Object-Oriented Style Programming
-```js
-// Constructor Pattern
-let Person = fn(name, age) {
-    let self = {};
-    
-    self["name"] = name;
-    self["age"] = age;
-    
-    self["greet"] = fn() {
-        "Hello, my name is " + self["name"];
-    };
-    
-    self["haveBirthday"] = fn() {
-        self["age"] = self["age"] + 1;
-        "Happy birthday! Now " + self["age"] + " years old.";
-    };
-    
-    self;
-};
-
-let alice = Person("Alice", 30);
-alice["greet"](); // "Hello, my name is Alice"
-alice["haveBirthday"](); // "Happy birthday! Now 31 years old."
-```
-
-### 🔄 Async-Style Programming with Callbacks
+### 🔄 Callback-Style Programming
 ```js
 let asyncOperation = fn(data, callback) {
     // Simulate async work with computation
@@ -249,119 +200,111 @@ let processData = fn(numbers) {
     processNext(numbers);
 };
 
-processData([1, 2, 3, 4, 5]);
+processData([1, 2, 3, 4, 5]); // Returns [2, 6, 12, 20, 30]
 ```
 
-### 🧮 Mathematical Utilities Library
+### 🧮 Mathematical Functions
 ```js
-let Math = fn() {
-    let self = {};
-    
-    // Factorial
-    self["factorial"] = fn(n) {
-        if (n <= 1) {
-            1;
-        } else {
-            n * self["factorial"](n - 1);
-        }
-    };
-    
-    // Power function
-    self["pow"] = fn(base, exp) {
-        if (exp == 0) {
-            1;
-        } else if (exp == 1) {
-            base;
-        } else {
-            base * self["pow"](base, exp - 1);
-        }
-    };
-    
-    // Greatest Common Divisor
-    self["gcd"] = fn(a, b) {
-        if (b == 0) {
-            a;
-        } else {
-            self["gcd"](b, a - (a / b) * b);
-        }
-    };
-    
-    // Prime checker
-    self["isPrime"] = fn(n) {
-        if (n < 2) {
-            false;
-        } else {
-            let checkDivisor = fn(divisor) {
-                if (divisor * divisor > n) {
-                    true;
-                } else if (n - (n / divisor) * divisor == 0) {
-                    false;
-                } else {
-                    checkDivisor(divisor + 1);
-                }
-            };
-            checkDivisor(2);
-        }
-    };
-    
-    self;
+// Factorial function
+let factorial = fn(n) {
+    if (n <= 1) {
+        1;
+    } else {
+        n * factorial(n - 1);
+    }
 };
 
-let math = Math();
-math["factorial"](5); // 120
-math["pow"](2, 10); // 1024
-math["gcd"](48, 18); // 6
-math["isPrime"](17); // true
+// Power function
+let pow = fn(base, exp) {
+    if (exp == 0) {
+        1;
+    } else if (exp == 1) {
+        base;
+    } else {
+        base * pow(base, exp - 1);
+    }
+};
+
+// Greatest Common Divisor
+let gcd = fn(a, b) {
+    if (b == 0) {
+        a;
+    } else {
+        gcd(b, a - (a / b) * b);
+    }
+};
+
+// Prime checker
+let isPrime = fn(n) {
+    if (n < 2) {
+        false;
+    } else {
+        let checkDivisor = fn(divisor) {
+            if (divisor * divisor > n) {
+                true;
+            } else if (n - (n / divisor) * divisor == 0) {
+                false;
+            } else {
+                checkDivisor(divisor + 1);
+            }
+        };
+        checkDivisor(2);
+    }
+};
+
+factorial(5); // 120
+pow(2, 10);   // 1024
+gcd(48, 18);  // 6
+isPrime(17);  // true
 ```
 
-### 🎯 Data Structure Implementations
+### 🎯 Array Algorithms
 ```js
-// Stack implementation
-let Stack = fn() {
-    let items = [];
-    let self = {};
+// Bubble sort implementation
+let bubbleSort = fn(arr) {
+    let length = len(arr);
+    let sorted = arr; // Copy array (simplified)
     
-    self["push"] = fn(item) {
-        items = push(items, item);
-        self;
-    };
-    
-    self["pop"] = fn() {
-        if (len(items) == 0) {
-            return null;
+    let i = 0;
+    while (i < length) {
+        let j = 0;
+        while (j < length - 1) {
+            if (sorted[j] > sorted[j + 1]) {
+                // Swap elements (simplified without proper swap)
+                let temp = sorted[j];
+                // Note: Direct array modification not fully supported
+                // This is a conceptual example
+            }
+            j = j + 1;
         }
-        let top = last(items);
-        // Remove last item (simplified)
-        let newItems = [];
-        let i = 0;
-        while (i < len(items) - 1) {
-            newItems = push(newItems, items[i]);
-            i = i + 1;
-        }
-        items = newItems;
-        top;
-    };
-    
-    self["peek"] = fn() {
-        if (len(items) == 0) {
-            null;
-        } else {
-            last(items);
-        }
-    };
-    
-    self["size"] = fn() {
-        len(items);
-    };
-    
-    self;
+        i = i + 1;
+    }
+    sorted;
 };
 
-let stack = Stack();
-stack["push"](1)["push"](2)["push"](3);
-stack["pop"](); // 3
-stack["peek"](); // 2
-stack["size"](); // 2
+// Find maximum in array
+let findMax = fn(arr) {
+    if (len(arr) == 0) {
+        return null;
+    }
+    
+    let max = first(arr);
+    let checkRest = fn(remaining) {
+        if (len(remaining) == 0) {
+            max;
+        } else {
+            let current = first(remaining);
+            if (current > max) {
+                max = current;
+            }
+            checkRest(rest(remaining));
+        }
+    };
+    
+    checkRest(rest(arr));
+};
+
+findMax([3, 7, 2, 9, 1]); // 9
 ```
 
 ## 🛠️ Tools & Technologies
@@ -369,11 +312,12 @@ stack["size"](); // 2
 ### Core Technologies
 
 - **Go 1.22.2**: Modern Go with latest language features
-- **Standard Library**: Pure Go implementation without external dependencies
+- **Standard Library**: Pure Go implementation with minimal external dependencies
+- **godotenv**: Environment variable management for the API server
 
 ### Development Practices
 
-- **Test-Driven Development (TDD)**: Comprehensive test suite with >90% coverage
+- **Test-Driven Development (TDD)**: Comprehensive test suite with >85% coverage
 - **Modular Architecture**: Clean separation of concerns across packages
 - **Interface-Driven Design**: Extensible architecture using Go interfaces
 - **Error Handling**: Idiomatic Go error handling patterns
@@ -411,6 +355,7 @@ Source Code → Lexer → Tokens → Parser → AST → Evaluator → Result
 interpreter-go/
 ├── .github/
 │   └── workflows/      # GitHub Actions CI/CD
+├── api/                # HTTP API server
 ├── lexer/              # Tokenization and lexical analysis
 ├── token/              # Token definitions and utilities
 ├── parser/             # Recursive descent parser
@@ -418,7 +363,9 @@ interpreter-go/
 ├── object/             # Runtime object system and environment
 ├── evaluator/          # Tree-walking interpreter
 ├── repl/               # Read-Eval-Print Loop
-└── main.go             # Entry point
+├── main.go             # REPL entry point
+├── Makefile            # Build automation
+└── index.html          # Web interface for API
 ```
 
 ### Key Components
@@ -442,13 +389,13 @@ interpreter-go/
 - Node interface implementation
 - Expression and statement types
 - String representation for debugging
-- Visitor pattern support
+- Support for assignment expressions and comments
 
 #### Object System (`object/`)
 
 - Runtime value representation
 - Environment-based variable scoping
-- Type system with integers, booleans, functions
+- Type system with integers, booleans, strings, functions, arrays
 - Memory-efficient object allocation
 
 #### Evaluator (`evaluator/`)
@@ -457,13 +404,30 @@ interpreter-go/
 - Expression evaluation
 - Control flow handling
 - Function call resolution
+- Built-in function implementations
 
 ## 🚦 Usage
 
 ### Running the REPL
 
 ```bash
+# Using Go directly
 go run main.go
+
+# Using Makefile
+make run
+make repl    # Build first, then run
+```
+
+### Running the Web API
+
+```bash
+# Using Go directly
+go run api/main.go
+
+# Using Makefile
+make run-api
+make api     # Build first, then run
 ```
 
 ### Running Tests
@@ -471,12 +435,15 @@ go run main.go
 ```bash
 # Run all tests
 go test ./...
+make test
 
 # Run tests with coverage
 go test -cover ./...
+make test-coverage
 
 # Run tests with race detection
 go test -race ./...
+make test-race
 
 # Run specific package tests
 go test ./lexer
@@ -484,8 +451,7 @@ go test ./parser
 go test ./evaluator
 
 # Generate coverage report
-go test -coverprofile=coverage.out ./...
-go tool cover -html=coverage.out -o coverage.html
+make test-coverage  # Creates coverage.html
 ```
 
 ### Development Workflow
@@ -493,12 +459,40 @@ go tool cover -html=coverage.out -o coverage.html
 ```bash
 # Format code
 go fmt ./...
+make fmt
 
 # Check for potential issues
 go vet ./...
+make vet
+
+# Run both formatting and vetting
+make check
+
+# Full development workflow
+make dev
 
 # Run full test suite (same as CI)
 go test -v -race -coverprofile=coverage.out ./...
+make test-ci
+```
+
+### Building
+
+```bash
+# Build REPL
+make build
+
+# Build API server
+make build-api
+
+# Build both
+make build-all
+
+# Build for multiple platforms
+make build-cross
+
+# Build optimized release
+make release
 ```
 
 ### Example Session
@@ -512,6 +506,9 @@ Feel free to type in commands
 >> let fibonacci = fn(n) { if (n < 2) { n } else { fibonacci(n-1) + fibonacci(n-2) } };
 >> fibonacci(10)
 55
+>> let numbers = [1, 2, 3, 4, 5];
+>> print(numbers)
+[1, 2, 3, 4, 5]
 ```
 
 ## 📚 Learning Outcomes
@@ -524,21 +521,25 @@ This project demonstrates proficiency in:
 - **Software Architecture**: Clean, modular design principles
 - **Testing**: Comprehensive test-driven development
 - **Data Structures**: AST manipulation and environment management
+- **Web Development**: HTTP API implementation
 - **DevOps**: CI/CD pipeline setup and automation
 
 ## 🎯 Future Enhancements
 
 ### Planned Features
 
+- [ ] Hash/Object data structure support for key-value pairs
 - [ ] Add colors to CLI output
 - [ ] Implement increment/decrement operators (`++`, `--`)
 - [ ] Add support for floating-point numbers
 - [ ] Improve error messages with line/column numbers
-- [ ] Implement comments (single-line `//` and multi-line `/* */`)
+- [ ] Extend multi-line comment support (`/* */`)
 - [ ] Add string interpolation support
 - [ ] Extend built-in function library
 - [ ] Support Unicode characters in identifiers
 - [ ] Add ternary expressions (`condition ? expr1 : expr2`)
+- [ ] While loop constructs
+- [ ] For loop constructs
 
 ### Potential Optimizations
 
@@ -546,6 +547,7 @@ This project demonstrates proficiency in:
 - [ ] Garbage collection optimizations
 - [ ] Symbol table implementation
 - [ ] Constant folding and dead code elimination
+- [ ] Tail call optimization
 
 ### CI/CD Improvements
 
@@ -553,6 +555,7 @@ This project demonstrates proficiency in:
 - [ ] Implement semantic versioning with automated releases
 - [ ] Add security scanning with CodeQL
 - [ ] Create multi-platform builds (Linux, macOS, Windows)
+- [ ] Docker containerization
 
 ## 📖 Book Reference
 
@@ -570,8 +573,8 @@ The book provides excellent guidance on:
 
 While this is primarily a learning project, contributions are welcome! Please ensure:
 
-- All tests pass (`go test ./...`)
-- Code follows Go conventions (`go fmt`, `go vet`)
+- All tests pass (`go test ./...` or `make test`)
+- Code follows Go conventions (`go fmt`, `go vet` or `make check`)
 - Maintain minimum 80% test coverage
 - New features include comprehensive tests
 - Documentation is updated accordingly
